@@ -49,6 +49,7 @@ with col1:
     # User toggles for feature engineering
     extract_date = st.checkbox("Extract 'Month' and 'Year' from 'week' column", value=True)
     calculate_discount = st.checkbox("Calculate 'discount_amount' (base_price - total_price)", value=True)
+    create_lag = st.checkbox("🔥 Create 'sales_last_week' (Lag Feature)", value=True, help="Boosts accuracy significantly by feeding the model data about how many units sold in the previous week.")
     drop_id = st.checkbox("Drop 'record_ID' (Identifiers do not hold predictive value)", value=True)
     
 with col2:
@@ -74,6 +75,17 @@ if st.button("Apply Preprocessing & Split Data", use_container_width=True):
     with st.spinner("Processing data..."):
         processed_df = df.copy()
         
+        if create_lag:
+            # sort data by store_id, sku_id, and week to ensure lag feature is created correctly
+            processed_df = processed_df.sort_values(by=['store_id', 'sku_id', 'week'])
+            # 2. shift(1) creates a lag of 1 week for each store_id and sku_id combination
+            processed_df['sales_last_week'] = processed_df.groupby(['store_id', 'sku_id'])['units_sold'].shift(1)
+            # 3. delete the first row of each group where lag feature is NaN (since it has no previous week to reference)
+            processed_df = processed_df.dropna()
+        
+        # Urutkan kembali secara kronologis untuk persiapan Train-Test Split
+        processed_df = processed_df.sort_values(by='week').reset_index(drop=True)
+
         # Apply selected Feature Engineering
         if extract_date:
             processed_df['month'] = processed_df['week'].dt.month
@@ -124,7 +136,7 @@ if st.session_state.get('is_preprocessed', False):
     st.markdown("<br>", unsafe_allow_html=True)
 
     col_nav1, col_nav2, col_nav3 = st.columns([1, 1, 1])
-    
+
     with col_nav2:
         if st.button("Proceed to Train Model ➡️", use_container_width=True):
             st.switch_page("pages/4_Train_Your_Model.py")

@@ -74,6 +74,10 @@ if st.button("Train Random Forest Model", use_container_width=True):
         mae = mean_absolute_error(y_test, y_pred)
         rmse = np.sqrt(mean_squared_error(y_test, y_pred))
         r2 = r2_score(y_test, y_pred)
+
+        st.session_state['model_mae'] = mae
+        st.session_state['model_rmse'] = rmse
+        st.session_state['model_r2'] = r2
         
         st.success("Model trained successfully!")
 

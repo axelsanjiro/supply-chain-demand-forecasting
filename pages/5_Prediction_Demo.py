@@ -22,6 +22,9 @@ if 'rf_model' not in st.session_state or st.session_state['rf_model'] is None:
 rf_model = st.session_state['rf_model']
 expected_features = st.session_state['X_train'].columns.tolist()
 
+mae = st.session_state.get('model_mae', 0)
+r2 = st.session_state.get('model_r2', 0)
+
 st.write("""
 Simulate a business scenario by adjusting the pricing and promotional strategies below. 
 The AI will forecast the expected demand (Units Sold) so you can optimize your inventory and avoid both spoilage and stockouts.
@@ -32,8 +35,12 @@ col1, col2 = st.columns([1, 1.2])
 
 with col1:
     st.subheader("Scenario Setup")
-    st.write("Adjust the business levers:")
+    st.write("****Adjust the business levers:****")
     
+    if 'sales_last_week' in expected_features:
+        st.markdown("##### Historical Context")
+        sales_last_week = st.number_input("How many units were sold LAST week?", min_value=0, value=100, step=10, help="This is the lag feature we engineered. It acts as the baseline trend for the model.")
+
     # Basic Identifiers
     c_store, c_sku = st.columns(2)
     with c_store:
@@ -74,7 +81,7 @@ with col2:
     if 'month' in expected_features: input_data['month'] = month
     if 'year' in expected_features: input_data['year'] = year
     if 'discount_amount' in expected_features: input_data['discount_amount'] = base_price - total_price
-
+    if 'sales_last_week' in expected_features: input_data['sales_last_week'] = sales_last_week
     # Fallback safety: fill missing features with 0 to prevent crashes
     for col in expected_features:
         if col not in input_data:
@@ -97,19 +104,27 @@ with col2:
             
             # Post-processing: Demand can't be negative, and usually we round up for inventory
             final_prediction = max(0, int(np.ceil(prediction)))
+
+            # Calculate a "safe stock" level by adding the MAE as a buffer to the predicted demand
+            safe_stock = final_prediction + int(np.ceil(mae))
             
             # Custom UI for the final result
             st.markdown(f"""
-            <div style="background-color: #262730; padding: 30px; border-radius: 15px; border: 2px solid #FF4B4B; text-align: center; margin-top: 10px;">
-                <h3 style="color: #FAFAFA; margin-bottom: 0;">Predicted Demand</h3>
-                <h1 style="color: #FF4B4B; font-size: 75px; margin-top: 0px; margin-bottom: 0px;">{final_prediction}</h1>
-                <p style="font-size: 18px; color: #A0A0A0; margin-top: 0px;">units required</p>
+            <div style="background-color: #262730; padding: 25px; border-radius: 10px; border-left: 5px solid #FF4B4B; margin-top: 10px;">
+                <p style="font-size: 16px; color: #A0A0A0; margin-bottom: 5px;">Estimated Demand</p>
+                <h1 style="color: #FF4B4B; font-size: 60px; margin-top: 0px; margin-bottom: 0px;">{final_prediction} <span style="font-size: 20px; color: #FAFAFA;">units</span></h1>
+                <hr style="border-color: #444;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #4CAF50;"><b>Model Confidence:</b> {r2*100:.1f}%</span>
+                    <span style="color: #FFC107;"><b>Error Margin:</b> ± {int(np.ceil(mae))} units</span>
+                </div>
             </div>
             """, unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-            # Business Actionable Insight
-            st.success(f"**Actionable Insight:** To prevent stockouts for SKU {sku_id} at Store {store_id} based on your ${base_price - total_price} discount strategy, dispatch at least **{final_prediction} units** to the warehouse this week.")
 
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Business Actionable Insight
+            st.info(f"💡 **Business Recommendation:** Based on the AI's error margin (MAE), to be 100% safe from stockouts for SKU {sku_id} at Store {store_id}, you should consider stocking **{safe_stock} units** (Predicted: {final_prediction} + Safety Buffer: {int(np.ceil(mae))}).")
 # 6. Conclusion
 st.markdown("---")
 st.caption("End of the Supply Chain Demand Forecasting pipeline. Thank you for exploring!")
