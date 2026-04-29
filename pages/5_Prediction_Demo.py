@@ -124,7 +124,7 @@ with col2:
             st.markdown("<br>", unsafe_allow_html=True)
 
             # Business Actionable Insight
-            st.info(f"💡 **Business Recommendation:** Based on the AI's error margin (MAE), to be 100% safe from stockouts for SKU {sku_id} at Store {store_id}, you should consider stocking **{safe_stock} units** (Predicted: {final_prediction} + Safety Buffer: {int(np.ceil(mae))}).")
+            st.info(f"**Business Recommendation:** Based on the AI's error margin (MAE), to be 100% safe from stockouts for SKU {sku_id} at Store {store_id}, you should consider stocking **{safe_stock} units** (Predicted: {final_prediction} + Safety Buffer: {int(np.ceil(mae))}).")
 # 6. Conclusion
 st.markdown("---")
 st.caption("End of the Supply Chain Demand Forecasting pipeline. Thank you for exploring!")

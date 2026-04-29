@@ -31,7 +31,7 @@ with col2:
     """)
 st.markdown("---")
 
-st.info("👈 Please use the menu in the left sidebar to navigate the application.")
+st.info("Please use the menu in the left sidebar to navigate the application.")
 
 # Navigation Links
 st.markdown("### Start Exploring:")

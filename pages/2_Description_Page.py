@@ -38,7 +38,7 @@ with tab1:
 
     st.markdown("<br>", unsafe_allow_html=True) 
     
-    with st.expander("💡 See Planned Feature Engineering", expanded=False):
+    with st.expander("See Planned Feature Engineering", expanded=False):
         st.write("""
         During the **Preprocessing Phase**, we will engineer new features to help the Random Forest model capture pricing dynamics and seasonal trends:
         * **discount_amount**: Calculated as `base_price - total_price` to identify the direct impact of price cuts.
@@ -63,7 +63,7 @@ with tab2:
         # Menampilkan dataframe dengan UI Streamlit yang interaktif
         st.dataframe(df_preview, use_container_width=True)
     else:
-        st.error("⚠️ Dataset not found. Please ensure 'train.csv' is inside the 'dataset' folder.")
+        st.error("Dataset not found. Please ensure 'train.csv' is inside the 'dataset' folder.")
 
 st.markdown("---")
 

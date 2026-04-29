@@ -43,14 +43,14 @@ with col1:
         min_value=10, max_value=200, value=50, step=5,
         help="The number of decision trees in the forest. More trees generally increase accuracy but take longer to compute."
     )
-    st.info("💡 **Optimal Guide:** The sweet spot is usually between **100 - 150**. Going higher often hits a plateau where accuracy stops improving, but the app runs slower.")
+    st.info("**Optimal Guide:** The sweet spot is usually between **100 - 150**. Going higher often hits a plateau where accuracy stops improving, but the app runs slower.")
 with col2:
     max_depth = st.slider(
         "Maximum Depth (max_depth)", 
         min_value=5, max_value=50, value=15, step=5,
         help="The maximum depth of each tree. Limits the complexity to prevent the model from memorizing the training data (overfitting)."
     )
-    st.info("💡 **Optimal Guide:** The ideal depth is typically between **10 - 20**. Too low causes *underfitting* (fails to learn patterns), while too high causes *overfitting* (memorizes training data but fails on future data).")
+    st.info("**Optimal Guide:** The ideal depth is typically between **10 - 20**. Too low causes *underfitting* (fails to learn patterns), while too high causes *overfitting* (memorizes training data but fails on future data).")
 
 st.markdown("---")
 

@@ -31,7 +31,7 @@ def load_data():
 df = load_data()
 
 if df is None:
-    st.error("⚠️ Dataset not found. Please ensure 'train.csv' is placed inside the 'data' folder.")
+    st.error("Dataset not found. Please ensure 'train.csv' is placed inside the 'data' folder.")
     st.stop()
 
 # Data Overview
@@ -49,7 +49,7 @@ with col1:
     # User toggles for feature engineering
     extract_date = st.checkbox("Extract 'Month' and 'Year' from 'week' column", value=True)
     calculate_discount = st.checkbox("Calculate 'discount_amount' (base_price - total_price)", value=True)
-    create_lag = st.checkbox("🔥 Create 'sales_last_week' (Lag Feature)", value=True, help="Boosts accuracy significantly by feeding the model data about how many units sold in the previous week.")
+    create_lag = st.checkbox("Create 'sales_last_week' (Lag Feature)", value=True, help="Boosts accuracy significantly by feeding the model data about how many units sold in the previous week.")
     drop_id = st.checkbox("Drop 'record_ID' (Identifiers do not hold predictive value)", value=True)
     
 with col2:

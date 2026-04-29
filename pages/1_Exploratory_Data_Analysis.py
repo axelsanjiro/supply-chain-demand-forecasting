@@ -49,7 +49,7 @@ with st.spinner('Loading dataset and generating visualizations...'):
     df = load_data()
 
 if df is None:
-    st.error("⚠️ Dataset not found. Please ensure 'train.csv' is placed inside the 'dataset' folder.")
+    st.error("Dataset not found. Please ensure 'train.csv' is placed inside the 'dataset' folder.")
     st.stop()
 
 # Data Overview
